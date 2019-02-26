@@ -28,7 +28,7 @@ class TripController extends RestController
         return $behaviors + [
             'apiauth' => [
                 'class' => Apiauth::className(),
-                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_package'],
+                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages'],
             ],
             'access' => [
                 'class' => AccessControl::className(),
@@ -154,7 +154,7 @@ class TripController extends RestController
         $accesstoken = Yii::$app->api->createAccesstoken($authorization_code);
         $username= AuthorizationCodes::find()->where(['code' => $authorization_code])->one(); 
        
-        $name=User::find()->where(['id' => $username['id']])->one(); 
+        $name=User::find()->where(['id' => $username['user_id']])->one(); 
 
         $data = [];
         $data['name']=$name['name'];
