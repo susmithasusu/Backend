@@ -28,7 +28,7 @@ class TripController extends RestController
         return $behaviors + [
             'apiauth' => [
                 'class' => Apiauth::className(),
-                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','detail_view'],
+                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_package'],
             ],
             'access' => [
                 'class' => AccessControl::className(),
@@ -134,8 +134,12 @@ class TripController extends RestController
         }
 
         $accesstoken = Yii::$app->api->createAccesstoken($authorization_code);
+        $username= AuthorizationCodes::find()->where(['code' => $authorization_code])->one(); 
+       
+        $name=User::find()->where(['id' => $username['id']])->one(); 
 
         $data = [];
+        $data['name']=$name['name'];
         $data['access_token'] = $accesstoken->token;
         $data['expires_at'] = $accesstoken->expires_at;
         Yii::$app->api->sendSuccessResponse($data);
@@ -212,7 +216,7 @@ class TripController extends RestController
             Yii::$app->api->sendFailedResponse("Invalid Record requested");
         }
     }
-    public function actionDetail_view(){
+    public function actionList_packages(){
         $params = $this->request;
         $response = Packages::search($params);
         Yii::$app->api->sendSuccessResponse($response['data'], $response['info']);
