@@ -98,6 +98,7 @@ class TripController extends RestController
      
               $model->name =$this->request['name'];
               $model->email =$this->request['email'];
+              $model->phone =$this->request['phone'];
               $model->password_hash =$password;
               $model->status = 0;
               $model->auth_key = \Yii::$app->security->generateRandomString();
