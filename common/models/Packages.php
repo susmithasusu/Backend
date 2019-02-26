@@ -34,8 +34,8 @@ class Packages extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [[ 'name', 'start','place', 'end','rate'], 'required'],
-            [[ 'name', 'start','place', 'end'], 'string', 'max' => 200],
+            [[ 'name', 'start','agency', 'end','rate'], 'required'],
+            [[ 'name', 'start','agency', 'end'], 'string', 'max' => 200],
             [[ 'rate'], 'integer'],
            
         ];
@@ -75,7 +75,7 @@ class Packages extends \yii\db\ActiveRecord
             $page = isset($page) ? $page : 1;
             $offset = ($page - 1) * $limit;
             $query = Packages::find()
-                ->select(['id','name', 'start','place', 'end','rate'])
+                ->select(['id','name', 'start','agency', 'end','rate'])
                 ->asArray(true)
                 ->limit($limit)
                 ->offset($offset);
@@ -84,8 +84,8 @@ class Packages extends \yii\db\ActiveRecord
             if(isset($params['name'])) {
                 $query->andFilterWhere(['like','name', $params['name']]);
             }
-            if(isset($params['place'])) {
-                $query->andFilterWhere(['like', 'place', $params['place']]);
+            if(isset($params['agency'])) {
+                $query->andFilterWhere(['like', 'agency', $params['agency']]);
             }
             
     

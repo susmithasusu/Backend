@@ -21,6 +21,8 @@ class UserSearch extends User
         return [
             [['id', 'status', 'updated_at'], 'integer'],
             [['password_hash', 'name', 'email', 'auth_key', 'password_reset_token', 'created_at'], 'safe'],
+            [['email'],'email','message'=>"Please enter a valid email"],
+            [['email'],'unique'],
         ];
     }
 
