@@ -27,6 +27,8 @@ class SignupForm extends Model
             ['name', 'required'],
            
             ['name', 'string', 'min' => 2, 'max' => 200],
+            [['name'], 'match', 'pattern' => '/^[a-z]\w*$/i'],
+            [['phone'],'match','pattern'=>  '/^[6-9][0-9]{9}$/' ],
 
             ['email', 'trim'],
             ['email', 'required'],
@@ -36,6 +38,7 @@ class SignupForm extends Model
 
             ['password', 'required'],
             ['password', 'string', 'min' => 5],
+            [['password'],'match','pattern'=> '/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.* )(?=.*[^a-zA-Z0-9]).{5,16}$/m', 'message' => 'password should contain atleast one uppercase letter, digit and a special charecter.'],
         ];
     }
 
