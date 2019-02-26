@@ -91,21 +91,38 @@ class TripController extends RestController
     public function actionRegister()
     {
 
-        $model = new User();
-        $data= $this->request;
-        $pass= $this->request['password'];
-        $password = Yii::$app->getSecurity()->generatePasswordHash($pass);
-     
-              $model->name =$this->request['name'];
-              $model->email =$this->request['email'];
-              $model->phone =$this->request['phone'];
-              $model->password_hash =$password;
-              $model->status = 0;
-              $model->auth_key = \Yii::$app->security->generateRandomString();
-              $model->save();
-              $data= $model->attributes;
+          $model = new SignupForm();
+        $model->attributes = $this->request;
+
+        if ($user = $model->signup()) {
+
+            $data=$user->attributes;
+            unset($data['auth_key']);
+            unset($data['password_hash']);
+            unset($data['password_reset_token']);
+            unset($data['status']);
+
             Yii::$app->api->sendSuccessResponse($data);
 
+        
+
+        // $model = new User();
+        // $model1=new SignupForm();
+        // $data= $this->request;
+        // $pass= $this->request['password'];
+        // $password = Yii::$app->getSecurity()->generatePasswordHash($pass);
+     
+        //       $model->name =$this->request['name'];
+        //       $model->email =$this->request['email'];
+        //       $model->phone =$this->request['phone'];
+        //       $model->password_hash =$password;
+        //       $model->status = 0;
+        //       $model->auth_key = \Yii::$app->security->generateRandomString();
+        //       $model->save();
+        //       $data= $model->attributes;
+        //     Yii::$app->api->sendSuccessResponse($data);
+
+        }
     }
 
     public function actionMe()
@@ -115,6 +132,7 @@ class TripController extends RestController
         unset($data['auth_key']);
         unset($data['password_hash']);
         unset($data['password_reset_token']);
+        unset($data['status']);
 
         Yii::$app->api->sendSuccessResponse($data);
     }

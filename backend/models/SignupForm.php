@@ -10,9 +10,10 @@ use Yii;
  */
 class SignupForm extends Model
 {
-    public $username;
+    public $name;
     public $email;
     public $password;
+    public $phone;
 
 
     /**
@@ -21,20 +22,20 @@ class SignupForm extends Model
     public function rules()
     {
         return [
-            [['username','password','email'],'required'],
-            ['username', 'trim'],
-            ['username', 'required'],
-            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
-            ['username', 'string', 'min' => 2, 'max' => 255],
+            [['name','password','email','phone'],'required'],
+            ['name', 'trim'],
+            ['name', 'required'],
+           
+            ['name', 'string', 'min' => 2, 'max' => 200],
 
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
-            ['email', 'string', 'max' => 255],
+            ['email', 'string', 'max' => 200],
             ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
 
             ['password', 'required'],
-            ['password', 'string', 'min' => 6],
+            ['password', 'string', 'min' => 5],
         ];
     }
 
@@ -53,9 +54,11 @@ class SignupForm extends Model
         }
         
         $user = new User();
-        $user->username = $this->username;
+        $user->name = $this->name;
         $user->email = $this->email;
+        $user->phone=$this->phone;
         $user->setPassword($this->password);
+        $user->status = 0;
         $user->generateAuthKey();
         
         return $user->save() ? $user : null;
