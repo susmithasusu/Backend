@@ -34,7 +34,7 @@ class Packages extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [[ 'name', 'start','agency', 'end','rate'], 'required'],
+            [[ 'name', 'start','agency', 'end','rate','description'], 'required'],
             [[ 'name', 'start','agency', 'end'], 'string', 'max' => 200],
             [[ 'rate'], 'integer'],
            
@@ -75,7 +75,7 @@ class Packages extends \yii\db\ActiveRecord
             $page = isset($page) ? $page : 1;
             $offset = ($page - 1) * $limit;
             $query = Packages::find()
-                ->select(['id','name', 'start','agency', 'end','rate'])
+                ->select(['id','name', 'start','agency', 'end','rate','description'])
                 ->asArray(true)
                 ->limit($limit)
                 ->offset($offset);

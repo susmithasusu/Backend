@@ -11,6 +11,8 @@ use backend\behaviours\Verbcheck;
 use backend\behaviours\Apiauth;
 use common\models\User;
 use common\models\Packages;
+use common\models\BookingTable;
+use backend\models\Contactus;
 
 /**
  * Site controller
@@ -28,7 +30,7 @@ class TripController extends RestController
         return $behaviors + [
             'apiauth' => [
                 'class' => Apiauth::className(),
-                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages'],
+                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages','bookingtable','contactlist','viewtrip'],
             ],
             'access' => [
                 'class' => AccessControl::className(),
@@ -59,6 +61,9 @@ class TripController extends RestController
                     'register' => ['POST'],
                     'accesstoken' => ['POST'],
                     'me' => ['GET'],
+                    'booking_table' =>['POST'],
+                    'contactlist' =>['POST'],
+                    'viewtrip' =>['GET']
                 ],
             ],
         ];
@@ -158,6 +163,7 @@ class TripController extends RestController
 
         $data = [];
         $data['name']=$name['name'];
+        $data['id']=$name['id'];
         $data['access_token'] = $accesstoken->token;
         $data['expires_at'] = $accesstoken->expires_at;
         Yii::$app->api->sendSuccessResponse($data);
@@ -238,6 +244,60 @@ class TripController extends RestController
         $params = $this->request;
         $response = Packages::search($params);
         Yii::$app->api->sendSuccessResponse($response['data'], $response['info']);
+    }
+
+    public function actionRequest(){
+        $model =  new Request();
+
+        $model-> attributes= $this->request;
+        $model->save();
+       
+        // $mail= $this->request['email'];
+        // exit();
+       if ($model->save()) {
+            Yii::$app->api->sendSuccessResponse($model->attributes);
+        } else {
+            Yii::$app->api->sendFailedResponse($model->errors);
+        }
+
+    }
+
+    public function actionBookingtable()
+    {
+        $model = new BookingTable();
+        $model-> attributes = $this->request;
+        $model->save();
+
+        if($model->save()){
+            yii::$app->api->sendSuccessResponse($model->attributes);
+        }else{
+            yii::$app->api->sendFailedResponse($model->errors);
+        }
+
+    }
+
+    public function actionContactlist(){
+        $model = new Contactus();
+        $model-> attributes =  $this->request;
+        $model->save();
+
+        if($model->save()){
+            yii::$app->api->sendSuccessResponse($model->attributes);
+        }else{
+            yii::$app->api->sendFailedResponse($model->errors);
+        }
+    }
+
+    public function actionViewtrip($id){
+
+        $model= new Bookingtable();
+
+        $data = Bookingtable::find()->where(['user_id' =>$id])->all();
+        Yii::$app->api->sendSuccessResponse($data);
+        //  else {
+        //     Yii::$app->api->sendFailedResponse($model->errors);
+        // }
+
     }
 
 }
