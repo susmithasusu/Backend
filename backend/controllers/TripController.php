@@ -13,6 +13,7 @@ use common\models\User;
 use common\models\Packages;
 use common\models\BookingTable;
 use backend\models\Contactus;
+use common\models\Custom;
 
 /**
  * Site controller
@@ -30,7 +31,7 @@ class TripController extends RestController
         return $behaviors + [
             'apiauth' => [
                 'class' => Apiauth::className(),
-                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages','bookingtable','contactlist','viewtrip'],
+                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages','bookingtable','contactlist','viewtrip','viewcustometrip'],
             ],
             'access' => [
                 'class' => AccessControl::className(),
@@ -63,7 +64,8 @@ class TripController extends RestController
                     'me' => ['GET'],
                     'booking_table' =>['POST'],
                     'contactlist' =>['POST'],
-                    'viewtrip' =>['GET']
+                    'viewtrip' =>['GET'],
+                    'viewcustometrip' =>['POST']
                 ],
             ],
         ];
@@ -97,7 +99,7 @@ class TripController extends RestController
     {
 
           $model = new SignupForm();
-        $model->attributes = $this->request;
+         $model->attributes = $this->request;
 
         if ($user = $model->signup()) {
 
@@ -298,6 +300,19 @@ class TripController extends RestController
         //     Yii::$app->api->sendFailedResponse($model->errors);
         // }
 
+    }
+
+    public function actionViewcustometrip(){
+
+        $model = new Custom();
+        $model-> attributes = $this->request;
+        $model->save();
+
+        if($model->save()){
+            yii::$app->api->sendSuccessResponse($model->attributes);
+        }else{
+            yii::$app->api->sendFailedResponse($model->errors);
+        }
     }
 
 }
