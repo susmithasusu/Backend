@@ -34,7 +34,7 @@ class BookingTable extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [[ 'package_id', 'user_id', 'starting_date','end_date', 'no_of_persons','no_of_days','tour_amount','Total_amt'], 'required'],
+            [[ 'name','agency','package_id', 'user_id', 'starting_date','end_date', 'no_of_persons','no_of_days','tour_amount','Total_amt'], 'required'],
             [[ 'tour_amount'], 'integer'],
            
         ];
@@ -45,7 +45,9 @@ class BookingTable extends \yii\db\ActiveRecord
      */
     public function attributeLabels()
     {
-        return [      
+        return [  
+            'name' => 'NAME',
+            'agency'=>'AGENCY',    
             'package_id' => 'PACKAGE_ID',
             'booking_date' => 'BOOKING_DATE',
             'start_date' => 'START_DATE',
