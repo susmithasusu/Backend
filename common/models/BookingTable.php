@@ -7,6 +7,7 @@ use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
+
 /**
  * This is the model class for table "display".
  *

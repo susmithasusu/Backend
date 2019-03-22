@@ -34,8 +34,8 @@ class Custom extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [[ 'req_fromlocation','req_tolocation','req_startdate', 'req_enddate', 'req_persons',
-            'req_expectedamt'], 'required'],
+            [['user_id', 'req_fromlocation','req_tolocation','req_startdate', 'req_enddate',	'req_duration','req_persons',
+            'req_expectedamt','agency'], 'required'],
             [[ 'req_expectedamt'], 'integer'],
            
         ];
@@ -47,13 +47,16 @@ class Custom extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [  
-         
+            'user_id'=>'USER_ID',
             'req_fromlocation'=> 'FROM_LOCATION',
             'req_tolocation'=>'TO_LOCATION',
             'req_startdate'=>'START_DATE_REQUESTED',
             'req_enddate'=>'END_DATE_REQUESTED',
+            'req_duration'=>'NUMBER_OF_DAYS',
             'req_persons'=>'NO_OF_PERSON_REQUESTED',
-            'req_expectedamt'=>'EXPECTED AMOUNT_REQUESTED'
+            'req_expectedamt'=>'EXPECTED AMOUNT_REQUESTED',
+            'agency'=>'AGENCY',
+            
             
         ];
     }
