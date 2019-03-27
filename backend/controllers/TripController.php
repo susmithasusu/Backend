@@ -1,6 +1,5 @@
 <?php
 namespace backend\controllers;
-
 use Yii;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
@@ -17,6 +16,7 @@ use common\models\Custom;
 use yii\db\ActiveQuery;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
+ 
 
 /**
  * Site controller
@@ -106,7 +106,7 @@ class TripController extends RestController
     {
 
           $model = new SignupForm();
-         $model->attributes = $this->request;
+          $model->attributes = $this->request;    
 
         if ($user = $model->signup()) {
 
@@ -115,11 +115,13 @@ class TripController extends RestController
             unset($data['password_hash']);
             unset($data['password_reset_token']);
             unset($data['status']);
-
+           
             Yii::$app->api->sendSuccessResponse($data);
 
         
+        }
 
+    
         // $model = new User();
         // $model1=new SignupForm();
         // $data= $this->request;
@@ -136,7 +138,7 @@ class TripController extends RestController
         //       $data= $model->attributes;
         //     Yii::$app->api->sendSuccessResponse($data);
 
-        }
+        // }
     }
 
     public function actionMe()
@@ -273,7 +275,9 @@ class TripController extends RestController
 
     public function actionBookingtable()
     {
-        $model = new BookingTable();
+        
+        $model = new BookingTable(); 
+        $model->flag = 0;
         $model-> attributes = $this->request;
         $model->save();
 
