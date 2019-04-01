@@ -154,7 +154,7 @@ class TripController extends RestController
         $accesstoken = Yii::$app->api->createAccesstoken($authorization_code);
         $username= AuthorizationCodes::find()->where(['code' => $authorization_code])->one(); 
        
-        $name=User::find()->where(['id' => $username['id']])->one(); 
+        $name=User::find()->where(['id' => $username['user_id']])->one(); 
 
         $data = [];
         $data['name']=$name['name'];
