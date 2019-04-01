@@ -6,11 +6,9 @@ use yii\filters\AccessControl;
 use common\models\LoginForm;
 use common\models\AuthorizationCodes;
 use common\models\AccessTokens;
-
 use backend\models\SignupForm;
 use backend\behaviours\Verbcheck;
 use backend\behaviours\Apiauth;
-
 use common\models\Product;
 
 /**
