@@ -80,6 +80,26 @@ return [
             ],
 
         ],
+        'mail' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'localhost',  // e.g. smtp.mandrillapp.com or smtp.gmail.com
+                'username' => 'tripmela357@gmail.com',
+                'password' => 'tripmela@100',
+                'port' => '587', // Port 25 is a very common port too
+                'encryption' => 'tls',
+
+        // 'streamOptions' => [
+        //     'ssl' => [
+        //         'allow_selt_signed'=>true,
+        //         'verify_peer' => false,
+        //         'allow_self_signed' => true,
+        //         'verify_peer_name' => false,
+        //     ],
+        // ],
+    ],
+],
 
 
         /*
