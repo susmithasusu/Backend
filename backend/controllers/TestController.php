@@ -21,7 +21,7 @@ use yii\helpers\ArrayHelper;
 /**
  * Site controller
  */
-class TripController extends RestController
+class TestController extends RestController
 {
     /**
      * @inheritdoc
@@ -34,7 +34,7 @@ class TripController extends RestController
         return $behaviors + [
             'apiauth' => [
                 'class' => Apiauth::className(),
-                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages','bookingtable','contactlist','viewtrip','custometrip','agency','mycustometrips','customdelete','cancelmytrip'],
+                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages' ],
             ],
             'access' => [
                 'class' => AccessControl::className(),
@@ -65,14 +65,6 @@ class TripController extends RestController
                     'register' => ['POST'],
                     'accesstoken' => ['POST'],
                     'me' => ['GET'],
-                    'booking_table' =>['POST'],
-                    'contactlist' =>['POST'],
-                    'viewtrip' =>['GET'],
-                    'Custometrip' =>['POST'],
-                    'agency'=>['GET'],
-                    'mycustometrips'=>['GET'],
-                    'customdelete'=>['GET'],
-                    'cancelmytrip'=>['GET']
                 ],
             ],
         ];
@@ -132,23 +124,7 @@ class TripController extends RestController
         }
 
     
-        // $model = new User();
-        // $model1=new SignupForm();
-        // $data= $this->request;
-        // $pass= $this->request['password'];
-        // $password = Yii::$app->getSecurity()->generatePasswordHash($pass);
-     
-        //       $model->name =$this->request['name'];
-        //       $model->email =$this->request['email'];
-        //       $model->phone =$this->request['phone'];
-        //       $model->password_hash =$password;
-        //       $model->status = 0;
-        //       $model->auth_key = \Yii::$app->security->generateRandomString();
-        //       $model->save();
-        //       $data= $model->attributes;
-        //     Yii::$app->api->sendSuccessResponse($data);
-
-        // }
+       
     }
 
     public function actionMe()
@@ -283,21 +259,7 @@ class TripController extends RestController
 
     }
 
-    public function actionBookingtable()
-    {
-        
-        $model = new BookingTable(); 
-        $model->flag = 0;
-        $model-> attributes = $this->request;
-        $model->save();
-
-        if($model->save()){
-            yii::$app->api->sendSuccessResponse($model->attributes);
-        }else{
-            yii::$app->api->sendFailedResponse($model->errors);
-        }
-
-    }
+   
 
     public function actionContactlist(){
         $model = new Contactus();
@@ -311,44 +273,34 @@ class TripController extends RestController
         }
     }
 
-    public function actionViewtrip($id){
 
-        $model= new BookingTable();
-        $model->flag = 0;
-        $data = BookingTable::find()->where(['user_id' =>$id])->all();
-        Yii::$app->api->sendSuccessResponse($data);
-        //  else {
-        //     Yii::$app->api->sendFailedResponse($model->errors);
-        // }
 
-    }
-
-    public function actionAgency()
-    {
+    // public function actionAgency()
+    // {
          
-        // \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON; we can also five this format
-            $array=array();
-            $model =  Packages::find()
-            ->select('agency')
-            ->from('packages')
-            ->distinct()
-            ->all();
-            // $model1 = ArrayHelper::getColumn($model, 'agency');
-            if($model)
-            {
-                foreach($model as $data)
-                {
-                    $array[]=$data['agency'];
-                }
-            }
+    //     // \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON; we can also five this format
+    //         $array=array();
+    //         $model =  Packages::find()
+    //         ->select('agency')
+    //         ->from('packages')
+    //         ->distinct()
+    //         ->all();
+    //         // $model1 = ArrayHelper::getColumn($model, 'agency');
+    //         if($model)
+    //         {
+    //             foreach($model as $data)
+    //             {
+    //                 $array[]=$data['agency'];
+    //             }
+    //         }
 
            
-            return[
-                'data'=>$array
-            ];
+    //         return[
+    //             'data'=>$array
+    //         ];
        
        
-    }
+    // }
 
 
     public function actionCustometrip(){

@@ -42,7 +42,7 @@ class Contactus extends \yii\db\ActiveRecord
             ['email','trim'],
             ['email','email'],
             ['email','string','max'=> '200'],
-            ['email','unique', 'targetClass' =>'\backend\models\Contactus','message' => 'this email has been already'],
+            ['email','unique', 'targetClass' =>'\backend\models\Contactus','message' => 'this email has been already '],
 
           
            
