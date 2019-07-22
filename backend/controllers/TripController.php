@@ -36,7 +36,7 @@ class TripController extends RestController
         return $behaviors + [
             'apiauth' => [
                 'class' => Apiauth::className(),
-                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages','bookingtable','contactlist','viewtrip','custometrip','agency','mycustometrips','customdelete','cancelmytrip','create','testemail'],
+                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages','bookingtable','contactlist','viewtrip','custometrip','agency','mycustometrips','customdelete','cancelmytrip','create','testemail','sendmsg'],
             ],
             'access' => [
                 'class' => AccessControl::className(),
@@ -77,7 +77,8 @@ class TripController extends RestController
                     'cancelmytrip'=>['GET'],
                     'create'=>['POST'],
                     'list_packages'=>['GET'] ,
-                    'testemail'=>['POST']
+                    'testemail'=>['POST'],
+                    'sendmsg'=>['POST']
                    
                 ],
             ],
@@ -165,16 +166,28 @@ class TripController extends RestController
         }   
 
     }
+// testing emails
 
    public function actionTestemail()
    {
     Yii::$app->mail->compose()
     ->setFrom([\Yii::$app->params['supportEmail'] => 'alexthanikkal@gmail.com'])
     ->setTo('alexthanikkal@gmail.com')
-    ->setSubject('This is a test mail ' )
+    ->setSubject('blocked ' )
     ->send();
    }
+  
+   // sending msg
 
+   public function actionSendmsg(){
+   
+    $name = 'wade';
+    Yii::$app->sms->compose('test-message', ['name' => 'Wade'])
+    //->setFrom('12345')  // if not set in config, or to override
+    ->setTo('+919567165887')
+    ->send();
+
+   }
 
 
     public function actionMe()

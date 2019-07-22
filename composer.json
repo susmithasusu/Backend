@@ -26,6 +26,8 @@
         "yiisoft/yii2-gii": "~2.0.0",
         "yiisoft/yii2-faker": "~2.0.0",
         "egulias/email-validator": "~2.0",
+        "abhi1693/yii2-sms": "2.0.0",
+        "wadeshuler/yii2-sms-twilio": "~1.0",
 
        
         "codeception/base": "^2.2.3",
