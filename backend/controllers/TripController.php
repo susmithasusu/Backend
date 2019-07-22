@@ -11,11 +11,13 @@ use backend\behaviours\Apiauth;
 use common\models\User;
 use common\models\Packages;
 use common\models\BookingTable;
+use common\models\UniteDetails; 
 use backend\models\Contactus;
 use common\models\Custom;
 use yii\db\ActiveQuery;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
+use bryglen\sendgrid\Mailer;
  
 
 /**
@@ -34,7 +36,7 @@ class TripController extends RestController
         return $behaviors + [
             'apiauth' => [
                 'class' => Apiauth::className(),
-                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages','bookingtable','contactlist','viewtrip','custometrip','agency','mycustometrips','customdelete','cancelmytrip'],
+                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages','bookingtable','contactlist','viewtrip','custometrip','agency','mycustometrips','customdelete','cancelmytrip','create','testemail'],
             ],
             'access' => [
                 'class' => AccessControl::className(),
@@ -72,7 +74,11 @@ class TripController extends RestController
                     'agency'=>['GET'],
                     'mycustometrips'=>['GET'],
                     'customdelete'=>['GET'],
-                    'cancelmytrip'=>['GET']
+                    'cancelmytrip'=>['GET'],
+                    'create'=>['POST'],
+                    'list_packages'=>['GET'] ,
+                    'testemail'=>['POST']
+                   
                 ],
             ],
         ];
@@ -118,16 +124,13 @@ class TripController extends RestController
            
             Yii::$app->api->sendSuccessResponse($data);
 
+
+            
+      
+
             // $model->email =$this->request['email'];
 
-            Yii::$app->mailer->compose()
-            ->setFrom('tripmela357@gmail.com')
-            ->setTo('alexthanikkal@gmail.com')
-            ->setSubject('Message subject')
-            ->setTextBody('hello')
-            ->setHtmlBody('<b>HTML content</b>')
-            ->send();
-
+         
         
         }
 
@@ -150,6 +153,29 @@ class TripController extends RestController
 
         // }
     }
+
+    public function actionCreate(){
+        $model = new UniteDetails();
+        $model->attributes = $this->request;
+        if($model->save()){
+            Yii::$app->api->sendSuccessResponse($model->attributes);
+        }
+        else{
+            Yii::$app->api->sendFailedResponse($model->errors);
+        }   
+
+    }
+
+   public function actionTestemail()
+   {
+    Yii::$app->mail->compose()
+    ->setFrom([\Yii::$app->params['supportEmail'] => 'alexthanikkal@gmail.com'])
+    ->setTo('alexthanikkal@gmail.com')
+    ->setSubject('This is a test mail ' )
+    ->send();
+   }
+
+
 
     public function actionMe()
     {
@@ -267,6 +293,12 @@ class TripController extends RestController
         Yii::$app->api->sendSuccessResponse($response['data'], $response['info']);
     }
 
+    // public function actionList_packages(){
+    //     $params = $this->request;
+    //     $response = UniteDetails::search($params);
+    //     yii::$app->api->sendSuccessResponse($response['data']);
+    // }
+
     public function actionRequest(){
         $model =  new Request();
 
@@ -371,6 +403,8 @@ class TripController extends RestController
         $data = Custom::find()->where(['user_id' =>$id])->all();
         Yii::$app->api->sendSuccessResponse($data);
     }
+
+
 
     public function actionCustomdelete($id)
     {
