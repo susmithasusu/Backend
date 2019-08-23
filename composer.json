@@ -17,7 +17,8 @@
         "rackspace/php-opencloud": "dev-master",
         "php": ">=5.4.0",
         "yiisoft/yii2": "~2.0.6",
-        "yiisoft/yii2-bootstrap": "~2.0.0"     
+        "yiisoft/yii2-bootstrap": "~2.0.0",
+        "bizley/migration": "~3.0.0"   
         
       
     },
@@ -28,6 +29,7 @@
         "egulias/email-validator": "~2.0",
         "abhi1693/yii2-sms": "2.0.0",
         "wadeshuler/yii2-sms-twilio": "~1.0",
+      
 
        
         "codeception/base": "^2.2.3",

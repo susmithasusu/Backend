@@ -9,15 +9,14 @@ use backend\models\SignupForm;
 use backend\behaviours\Verbcheck;
 use backend\behaviours\Apiauth;
 use common\models\User;
-use common\models\Packages;
-use common\models\BookingTable;
-use common\models\UniteDetails; 
-use backend\models\Contactus;
-use common\models\Custom;
+use common\models\OutStock;
 use yii\db\ActiveQuery;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use bryglen\sendgrid\Mailer;
+use backend\models\AddProduct;
+use backend\models\AddCategory;
+
  
 
 /**
@@ -36,7 +35,7 @@ class TripController extends RestController
         return $behaviors + [
             'apiauth' => [
                 'class' => Apiauth::className(),
-                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages','bookingtable','contactlist','viewtrip','custometrip','agency','mycustometrips','customdelete','cancelmytrip','create','testemail','sendmsg'],
+                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages','bookingtable','contactlist','viewtrip','custometrip','agency','mycustometrips','customdelete','cancelmytrip','create','testemail','sendmsg','otp','list_outofstock','add','category'],
             ],
             'access' => [
                 'class' => AccessControl::className(),
@@ -67,18 +66,13 @@ class TripController extends RestController
                     'register' => ['POST'],
                     'accesstoken' => ['POST'],
                     'me' => ['GET'],
-                    'booking_table' =>['POST'],
-                    'contactlist' =>['POST'],
-                    'viewtrip' =>['GET'],
-                    'Custometrip' =>['POST'],
-                    'agency'=>['GET'],
-                    'mycustometrips'=>['GET'],
-                    'customdelete'=>['GET'],
-                    'cancelmytrip'=>['GET'],
-                    'create'=>['POST'],
-                    'list_packages'=>['GET'] ,
                     'testemail'=>['POST'],
-                    'sendmsg'=>['POST']
+                    'sendmsg'=>['POST'],
+                    'otp'=>['GET'],
+                    'add'=>['POST'],
+                    'category'=>['POST']
+                   
+
                    
                 ],
             ],
@@ -121,19 +115,40 @@ class TripController extends RestController
             unset($data['auth_key']);
             unset($data['password_hash']);
             unset($data['password_reset_token']);
-            unset($data['status']);
-           
+            unset($data['status']);          
             Yii::$app->api->sendSuccessResponse($data);
-
-
-            
-      
-
-            // $model->email =$this->request['email'];
-
-         
-        
+            $model->email =$this->request['email'];         
         }
+    }
+
+    public function actionAdd(){
+
+
+            $model = new AddProduct();
+            $model->attributes = $this->request;
+            $model->save();
+            if ($model->save()) {
+                Yii::$app->api->sendSuccessResponse($model->attributes);
+            } else {
+                Yii::$app->api->sendFailedResponse($model->errors);
+            }
+        }
+
+        public function actionCategory()
+        {
+            
+            $model = new AddCategory();
+            $model->attributes = $this->request;
+            $model->save();
+            if ($model->save()) {
+                Yii::$app->api->sendSuccessResponse($model->attributes);
+            } else {
+                Yii::$app->api->sendFailedResponse($model->errors);
+            }
+
+        }
+     
+       
 
     
         // $model = new User();
@@ -153,19 +168,8 @@ class TripController extends RestController
         //     Yii::$app->api->sendSuccessResponse($data);
 
         // }
-    }
-
-    public function actionCreate(){
-        $model = new UniteDetails();
-        $model->attributes = $this->request;
-        if($model->save()){
-            Yii::$app->api->sendSuccessResponse($model->attributes);
-        }
-        else{
-            Yii::$app->api->sendFailedResponse($model->errors);
-        }   
-
-    }
+    
+ 
 // testing emails
 
    public function actionTestemail()
@@ -177,17 +181,23 @@ class TripController extends RestController
     ->send();
    }
   
-   // sending msg
+   // sending msg 
 
-   public function actionSendmsg(){
-   
-    $name = 'wade';
-    Yii::$app->sms->compose('test-message', ['name' => 'Wade'])
-    //->setFrom('12345')  // if not set in config, or to override
-    ->setTo('+919567165887')
-    ->send();
+   public function actionOtp(){
+    $n = 4;
+    $generator = "1357902468";
+    $result = ""; 
+    for ($i = 1; $i <= $n; $i++) { 
+        $result .= substr($generator, (rand()%(strlen($generator))), 1); 
+    } 
+  
+    // Return result 
+    // return $result;
+    print_r($result);
 
-   }
+} 
+  
+
 
 
     public function actionMe()
@@ -203,7 +213,8 @@ class TripController extends RestController
     }
 
     public function actionAccesstoken()
-    {
+    {  
+        // print_r('authcode'); exit();
 
         if (!isset($this->request["authorization_code"])) {
             Yii::$app->api->sendFailedResponse("Authorization code missing");
@@ -235,8 +246,7 @@ class TripController extends RestController
         $model = new LoginForm();
 
         $model->attributes = $this->request;
-
-
+      
         if ($model->validate() && $model->login()) {
 
             $auth_code = Yii::$app->api->createAuthorizationCode(Yii::$app->user->identity['id']);
@@ -272,26 +282,8 @@ class TripController extends RestController
 
 
     }
-    public function actionPackages()
-    {
-        $model = new Packages;
-        $model->attributes = $this->request;
-        // $model->email = $this->request['email'];
-        // $model->name = $this->request['name'];
-        // $model->phone = $this->request['phone'];
-        // $model->flag = 0;
-        $model->save();
-        if ($model->save()) {
-            Yii::$app->api->sendSuccessResponse($model->attributes);
-        } else {
-            Yii::$app->api->sendFailedResponse($model->errors);
-        }
-    }
-    public function actionView_package($id)
-    {
-        $model = $this->findModel($id);
-        Yii::$app->api->sendSuccessResponse($model->attributes);
-    }
+   
+  
     protected function findmodel($id)
     {
         if (($model = Packages::findOne($id)) !== null) {
@@ -300,143 +292,8 @@ class TripController extends RestController
             Yii::$app->api->sendFailedResponse("Invalid Record requested");
         }
     }
-    public function actionList_packages(){
-        $params = $this->request;
-        $response = Packages::search($params);
-        Yii::$app->api->sendSuccessResponse($response['data'], $response['info']);
-    }
+    
 
-    // public function actionList_packages(){
-    //     $params = $this->request;
-    //     $response = UniteDetails::search($params);
-    //     yii::$app->api->sendSuccessResponse($response['data']);
-    // }
-
-    public function actionRequest(){
-        $model =  new Request();
-
-        $model-> attributes= $this->request;
-        $model->save();
-       
-        // $mail= $this->request['email'];
-        // exit();
-       if ($model->save()) {
-            Yii::$app->api->sendSuccessResponse($model->attributes);
-        } else {
-            Yii::$app->api->sendFailedResponse($model->errors);
-        }
-
-    }
-
-    public function actionBookingtable()
-    {
-        
-        $model = new BookingTable(); 
-        $model->flag = 0;
-        $model-> attributes = $this->request;
-        $model->save();
-
-        if($model->save()){
-            yii::$app->api->sendSuccessResponse($model->attributes);
-        }else{
-            yii::$app->api->sendFailedResponse($model->errors);
-        }
-
-    }
-
-    public function actionContactlist(){
-        $model = new Contactus();
-        $model-> attributes =  $this->request;
-        $model->save();
-
-        if($model->save()){
-            yii::$app->api->sendSuccessResponse($model->attributes);
-        }else{
-            yii::$app->api->sendFailedResponse($model->errors);
-        }
-    }
-
-    public function actionViewtrip($id){
-
-        $model= new BookingTable();
-        $model->flag = 0;
-        $data = BookingTable::find()->where(['user_id' =>$id])->all();
-        Yii::$app->api->sendSuccessResponse($data);
-        //  else {
-        //     Yii::$app->api->sendFailedResponse($model->errors);
-        // }
-
-    }
-
-    public function actionAgency()
-    {
-         
-        // \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON; we can also five this format
-            $array=array();
-            $model =  Packages::find()
-            ->select('agency')
-            ->from('packages')
-            ->distinct()
-            ->all();
-            // $model1 = ArrayHelper::getColumn($model, 'agency');
-            if($model)
-            {
-                foreach($model as $data)
-                {
-                    $array[]=$data['agency'];
-                }
-            }
-
-           
-            return[
-                'data'=>$array
-            ];
-       
-       
-    }
-
-
-    public function actionCustometrip(){
-
-        $model = new Custom();
-        $model-> attributes = $this->request;
-        $model->flag = 0;
-        $model->save();
-
-        if($model->save()){
-            yii::$app->api->sendSuccessResponse($model->attributes);
-        }else{
-            yii::$app->api->sendFailedResponse($model->errors);
-        }
-    }
-
-    public function actionMycustometrips($id){
-
-        $model = new Custom();
-        $data = Custom::find()->where(['user_id' =>$id])->all();
-        Yii::$app->api->sendSuccessResponse($data);
-    }
-
-
-
-    public function actionCustomdelete($id)
-    {
-          
-        // $model = new Custom();
-        $data =  Custom::find()->where(['id' =>$id])->one();
-        $data->flag = 1;
-        $data->save();
-        Yii::$app->api->sendSuccessResponse($data->attributes);
-
-    }
-
-    public function actionCancelmytrip($id)
-    {  
-        $data = BookingTable::find()->where(['booking_id'=>$id])->one();
-        $data->flag = 1;
-        $data->save();
-        yii::$app->api->sendSuccessResponse($data->attributes);
-
-    }
-
+  
+   
 }
