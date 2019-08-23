@@ -15,6 +15,15 @@ class m190823_104023_access_tokens extends Migration
         $this->createTable('accesstokens',array(
 
             'id'=> $this->primarykey(),
+            'token'=>$this->string()->notnull(),
+            'expires_at'=>$this->integer()->notnull(),
+            'auth_ccode'=>$this->string()->notnull(),
+            'user_id'=>$this->integer()->notnull(),
+            'app_id'=>$this->integer()->notnull(),
+            'created_at'=>$this->integer()->notnull(),
+            'updated_at'=>$this->integer()->notnull()
+
+
           
 
         ));
@@ -27,7 +36,8 @@ class m190823_104023_access_tokens extends Migration
     public function safeDown()
     {
         echo "m190823_104023_access_tokens cannot be reverted.\n";
-
+       
+        $this->dropTable('access_token');
         return false;
     }
 
