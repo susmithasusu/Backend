@@ -138,8 +138,8 @@ class TripController extends RestController
             $imageName = 'img_'.$this->request['product_name'].'.'.'png';
             $img = \Yii::$app->basePath.'\web\uploads'.$imageName;
             $new_img=Yii::$app->urlManager->createabsoluteUrl('uploads').'/'.$imageName;
-            file_put_contents(\Yii::$app->basePath.'\web\uploads\''.$imageName,$data);
-            exec('sudo chmod' .Yii::$app->basePath.'\web\uploads\''.$imageName.'777');
+            file_put_contents(\Yii::$app->basePath.'/web/uploads/'.$imageName, $data);
+            exec('sudo chmod ' .Yii::$app->basePath.'/web/uploads/'.$imageName.'777');
             $model->category_name = $this->request['category_name'];
             $model->product_name = $this->request['product_name'];
             $model->product_image =  $imageName;
@@ -160,17 +160,30 @@ class TripController extends RestController
         {
              
              $model = AddProduct::find()->all();
+             foreach ( $model as $key ) {
+                $key['product_image'] = Yii::$app->urlManager->createabsoluteUrl('uploads').'/'. $key['product_image'];
+                // print_r($img);
+                // exit();
+                    
+                 }
+             
+
              return[
-                 'products'=>$model,
-             ];
-       
-             if($model){
+                'products'=>$model,
+            ];
+
+            if($model){
                 Yii::$app->api->sendSuccessResponse($model);
              }
              else{
                 Yii::$app->api->sendFailedResponse($model->errors);
              }
-        }
+               
+             }
+            
+       
+    
+        
 
         public function actionCategory()
         {
