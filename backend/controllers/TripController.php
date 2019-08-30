@@ -16,6 +16,7 @@ use yii\helpers\ArrayHelper;
 use bryglen\sendgrid\Mailer;
 use backend\models\AddProduct;
 use backend\models\AddCategory;
+use yii\web\UploadedFile;
 
  
 
@@ -35,7 +36,7 @@ class TripController extends RestController
         return $behaviors + [
             'apiauth' => [
                 'class' => Apiauth::className(),
-                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages','bookingtable','contactlist','viewtrip','custometrip','agency','mycustometrips','customdelete','cancelmytrip','create','testemail','sendmsg','otp','list_outofstock','add','category'],
+                'exclude' => ['authorize', 'register','create', 'accesstoken','index','list','details','packages','view_package','list_packages','bookingtable','contactlist','viewtrip','custometrip','agency','mycustometrips','customdelete','cancelmytrip','create','testemail','sendmsg','otp','list_outofstock','add','category','viewcategory','booking'],
             ],
             'access' => [
                 'class' => AccessControl::className(),
@@ -70,7 +71,9 @@ class TripController extends RestController
                     'sendmsg'=>['POST'],
                     'otp'=>['GET'],
                     'add'=>['POST'],
-                    'category'=>['POST']
+                    'category'=>['POST'],
+                    'viewcategory'=>['GET'],
+                    'booking'=>['GET']
                    
 
                    
@@ -126,8 +129,27 @@ class TripController extends RestController
 
             $model = new AddProduct();
             $model->attributes = $this->request;
+            $content = base64_decode($this->request['product_image']);
+            $image = $this->request['product_image'];
+            $image = str_replace('data:image/png;base64,', '', $image);
+            $image = str_replace('','+',$image);
+            $data = base64_decode($image);
+            $imageName = 'img_'.$this->request['product_name'].'.'.'jpg';
+            $img = \Yii::$app->basePath.'\web\uploads'.$imageName;
+            $new_img=Yii::$app->urlManager->createabsoluteUrl('uploads').'/'.$imageName;
+            file_put_contents(\Yii::$app->basePath.'\web\uploads\''.$imageName,$data);
+            exec('sudo chmod' .Yii::$app->basePath.'\web\uploads\''.$imageName.'777');
+            $model->category_name = $this->request['category_name'];
+            $model->product_name = $this->request['product_name'];
+            $model->product_image =  $new_img;
+            $model->product_description = $this->request['product_description'];
+            $model->product_price = $this->request['product_price'];
+            $model->product_fine = $this->request['product_fine'];
+            $model->total_products = $this->request['total_products'];
             $model->save();
+         
             if ($model->save()) {
+                $model->product_image = $new_img;
                 Yii::$app->api->sendSuccessResponse($model->attributes);
             } else {
                 Yii::$app->api->sendFailedResponse($model->errors);
@@ -147,6 +169,34 @@ class TripController extends RestController
             }
 
         }
+
+
+        public function actionViewcategory()
+        {
+
+            $view = AddCategory::find()->all(); 
+            if(!$view){
+                Yii::$app->api->sendFailedResponse($view);
+            }
+            else{
+                  Yii::$app->api->sendSuccessResponse($view);
+            }
+        }
+
+        public function actionBooking($id){
+
+            $model = BookingTable::findone($id);
+
+            if(!$model){
+                Yii::$app->api->sendFailedResponse($model);
+            }
+            else{
+                Yii::$app->api->sendSuccessResponse($model);
+            }
+
+        }
+
+
      
        
 
@@ -191,14 +241,11 @@ class TripController extends RestController
         $result .= substr($generator, (rand()%(strlen($generator))), 1); 
     } 
   
-    // Return result 
-    // return $result;
+    
     print_r($result);
 
-} 
+     } 
   
-
-
 
     public function actionMe()
     {

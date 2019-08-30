@@ -45,6 +45,27 @@ class AddCategory extends \yii\db\ActiveRecord
             
         ];
     }
+
+    public function beforeSave($insert)
+    {
+
+        if (parent::beforeSave($insert)) {
+
+            if ($this->isNewRecord) {
+                $this->created_at = date("Y-m-d H:i:s", time());
+                $this->updated_at = date("Y-m-d H:i:s", time());
+
+            } else {
+
+                $this->updated_at = date("Y-m-d H:i:s", time());
+            }
+            return true;
+        } else {
+            return false;
+        }
+
+
+    }
     
         /**
          * @inheritdoc

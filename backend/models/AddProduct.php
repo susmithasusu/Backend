@@ -25,7 +25,7 @@ class AddProduct extends \yii\db\ActiveRecord
     public function rules()
     {
      return [
-            [[ 'product_name', 'product_description','product_category', 'product_price','product_fine','total_products'], 'required'],
+            [[ 'product_name', 'product_description','category_name', 'product_price','product_fine','total_products','product_image'], 'required'],
 
             ['product_name','trim'],
         
@@ -39,16 +39,38 @@ class AddProduct extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [      
-            'product_name'=> 'PRODUCT_NAME',
-             'product_description'=> 'PRODUCT_DESCRIPTION',
-             'product_category'=>'PRODUCT_CATEGORY',
-              'product_price'=>'PRODUCT_PRICE',
-              'product_fine'=>'PRODUCT_FINE',
-              'total_products'=>'TOTAL_PRODUCTS'
-            
+                'product_name'=> 'PRODUCT_NAME',
+                'product_description'=> 'PRODUCT_DESCRIPTION',
+                'product_category'=>'PRODUCT_CATEGORY',
+                'product_price'=>'PRODUCT_PRICE',
+                'product_fine'=>'PRODUCT_FINE',
+                'total_products'=>'TOTAL_PRODUCTS',
+                'product_image'=>'PRODUCT_IMAGE'
+                
           
             
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+
+        if (parent::beforeSave($insert)) {
+
+            if ($this->isNewRecord) {
+                $this->created_at = date("Y-m-d H:i:s", time());
+                $this->updated_at = date("Y-m-d H:i:s", time());
+
+            } else {
+
+                $this->updated_at = date("Y-m-d H:i:s", time());
+            }
+            return true;
+        } else {
+            return false;
+        }
+
+
     }
     
         /**
